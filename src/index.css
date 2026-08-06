@@ -1,0 +1,124 @@
+@import "tailwindcss";
+
+@theme {
+  --color-game-bg: #0D0D0D;
+  --color-game-panel: #151515;
+  --color-game-surface: #1C1C1C;
+  --color-game-card: #232323;
+  --color-game-border: #343434;
+  
+  --color-game-text-primary: #F2F2F2;
+  --color-game-text-secondary: #B3B3B3;
+  --color-game-text-muted: #8A8A8A;
+  
+  --color-game-accent: #D4D4D4;
+  --color-game-accent-hover: #FFFFFF;
+
+  --color-game-pink: #A85656;   /* Error/Red */
+  --color-game-yellow: #B88A44; /* Warning/Yellow */
+  --color-game-green: #5E8C61;  /* Success/Green */
+  --color-game-cyan: #D4D4D4;   /* Using accent for cyan placeholders */
+  
+  --font-pixel: "VT323", monospace;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-game-bg);
+  color: var(--color-game-text-primary);
+  font-family: var(--font-pixel);
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+  image-rendering: pixelated;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* NO SCANLINES OR GLOW - MATTE FINISH */
+body::after {
+  content: none;
+}
+
+/* RETRO DIALOG BOX - MATTE & MINIMAL */
+.pixel-box {
+  background: var(--color-game-panel);
+  border: 2px solid var(--color-game-border);
+  box-shadow: 4px 4px 0px #000000;
+  padding: 1.4rem;
+  position: relative;
+}
+
+.pixel-box-pink {
+  border-color: var(--color-game-pink);
+  box-shadow: 4px 4px 0px #000000;
+}
+
+.pixel-button {
+  background: var(--color-game-card);
+  color: var(--color-game-text-primary);
+  border: 2px solid var(--color-game-border);
+  box-shadow: 2px 2px 0px #000000;
+  padding: 0.5rem 1rem;
+  font-family: var(--font-pixel);
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: all 0.1s;
+}
+
+.pixel-button:hover {
+  background: var(--color-game-accent);
+  color: #000000;
+  border-color: var(--color-game-accent-hover);
+}
+
+.pixel-button-yellow {
+  background: var(--color-game-yellow);
+  color: #000000;
+  border-color: var(--color-game-border);
+}
+
+.pixel-button-yellow:hover {
+  background: var(--color-game-accent);
+  color: #000000;
+}
+
+/* HEALTH BAR - MATTE */
+.pixel-bar-bg {
+  height: 20px;
+  background: var(--color-game-surface);
+  border: 2px solid var(--color-game-border);
+  position: relative;
+  overflow: hidden;
+}
+
+.pixel-bar-fill {
+  height: 100%;
+  background: var(--color-game-green);
+}
+
+/* TEXT SHADOW - FLAT */
+.text-pixel-shadow {
+  text-shadow: 2px 2px 0px #000000;
+}
+
+/* GRID BACKGROUND - VERY SUBTLE */
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* SEMANTIC COLOR OVERRIDES FOR APP COMPONENT */
+.text-game-pink { color: var(--color-game-pink); }
+.text-game-yellow { color: var(--color-game-yellow); }
+.text-game-cyan { color: var(--color-game-cyan); }
+.border-game-yellow { border-color: var(--color-game-yellow); }
+.border-game-cyan { border-color: var(--color-game-cyan); }
+.border-game-pink { border-color: var(--color-game-pink); }

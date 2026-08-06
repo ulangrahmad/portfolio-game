@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720">
+  <rect width="1200" height="720" fill="#0D0D0D"/>
+  <rect x="54" y="54" width="1092" height="612" fill="#1C1C1C" stroke="#343434" stroke-width="4"/>
+  <rect x="82" y="82" width="1036" height="58" fill="#232323" stroke="#343434" stroke-width="3"/>
+  <text x="106" y="120" fill="#F2F2F2" font-family="monospace" font-size="30" letter-spacing="2">FOOD & BEVERAGE ORDERING SYSTEM</text>
+  <text x="106" y="166" fill="#8A8A8A" font-family="monospace" font-size="18" letter-spacing="1">DASHBOARD PENJUALAN & PESANAN</text>
+  
+  <rect x="92" y="200" width="320" height="380" fill="#232323" stroke="#343434" stroke-width="3"/>
+  <text x="122" y="240" fill="#B88A44" font-family="monospace" font-size="24">ORDER SUMMARY</text>
+  <rect x="122" y="275" width="260" height="28" fill="#5E8C61" opacity="0.8"/>
+  <text x="132" y="295" fill="#F2F2F2" font-family="monospace" font-size="20">TODAY: 28 ORDERS</text>
+  <rect x="122" y="320" width="260" height="28" fill="#5E8C61" opacity="0.6"/>
+  <text x="132" y="340" fill="#F2F2F2" font-family="monospace" font-size="20">$342 SALES</text>
+  <rect x="462" y="220" width="280" height="330" fill="#232323" stroke="#343434" stroke-width="3"/>
+  <text x="492" y="260" fill="#F2F2F2" font-family="monospace" font-size="24">MENU MGMT</text>
+  <rect x="492" y="295" width="120" height="40" fill="#1C1C1C" stroke="#343434" stroke-width="2"/>
+  <text x="502" y="321" fill="#8A8A8A" font-family="monospace" font-size="16">COFFEE</text>
+  <rect x="800" y="200" width="300" height="380" fill="#232323" stroke="#343434" stroke-width="3"/>
+  <text x="830" y="240" fill="#F2F2F2" font-family="monospace" font-size="24">ACTIVE ORDERS</text>
+  <rect x="830" y="285" width="240" height="60" fill="#1C1C1C" stroke="#343434" stroke-width="2"/>
+  <text x="840" y="320" fill="#B3B3B3" font-family="monospace" font-size="16">ORDER #1 - PENDING</text>
+
+</svg>
