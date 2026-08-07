@@ -202,9 +202,21 @@ export default function SimpleGame() {
       />
 
       <div className="flex gap-3 flex-wrap justify-center">
-        <button className="pixel-button" onMouseDown={() => keysRef.current.add("ArrowLeft")} onMouseUp={() => keysRef.current.delete("ArrowLeft")}>◄</button>
+        <button 
+          className="pixel-button" 
+          onMouseDown={() => keysRef.current.add("ArrowLeft")} 
+          onMouseUp={() => keysRef.current.delete("ArrowLeft")}
+          onTouchStart={(e) => { e.preventDefault(); keysRef.current.add("ArrowLeft"); }}
+          onTouchEnd={(e) => { e.preventDefault(); keysRef.current.delete("ArrowLeft"); }}
+        >◄</button>
         <button className="pixel-button pixel-button-yellow" onClick={shoot}>FIRE</button>
-        <button className="pixel-button" onMouseDown={() => keysRef.current.add("ArrowRight")} onMouseUp={() => keysRef.current.delete("ArrowRight")}>►</button>
+        <button 
+          className="pixel-button" 
+          onMouseDown={() => keysRef.current.add("ArrowRight")} 
+          onMouseUp={() => keysRef.current.delete("ArrowRight")}
+          onTouchStart={(e) => { e.preventDefault(); keysRef.current.add("ArrowRight"); }}
+          onTouchEnd={(e) => { e.preventDefault(); keysRef.current.delete("ArrowRight"); }}
+        >►</button>
         <button className="pixel-button" onClick={reset}>RESET</button>
       </div>
 
