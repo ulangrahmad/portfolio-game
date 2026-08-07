@@ -1,598 +1,381 @@
-import { useState, useEffect } from "react";
-import { Play, Shield, Terminal, Trophy, User, ArrowRight, Heart, Map, Mail, Link, Image } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
-import PixelPortrait from "./components/PixelPortrait";
+import { useState } from "react";
+import { ArrowDownRight, ArrowUpRight, Download, Menu, X } from "lucide-react";
+import Reveal from "./components/Reveal";
+import ProjectGallery, { projectsData } from "./components/ProjectGallery";
 import SimpleGame from "./components/SimpleGame";
-import { sfx } from "./utils/sfx";
-import PixelMonster from "./components/PixelMonster";
-import ProjectGallery from "./components/ProjectGallery"; // NEW
 
-// ====== Animated Helpers ======
+const nav = [
+  { href: "#work", label: "Work" },
+  { href: "#about", label: "About" },
+  { href: "#skills", label: "Skills" },
+  { href: "#timeline", label: "Timeline" },
+  { href: "#play", label: "Play" },
+  { href: "#contact", label: "Contact" },
+];
 
-function BlinkCursor() {
-  const reduce = useReducedMotion();
-  return (
-    <motion.span
-      animate={reduce ? {} : { opacity: [1, 0, 1] }}
-      transition={{ duration: 0.8, repeat: Infinity }}
-      className="inline-block ml-1"
-    >
-      █
-    </motion.span>
-  );
-}
+const skills = [
+  {
+    name: "Cybersecurity",
+    detail: "Wazuh, SIEM concepts, Suricata, Wireshark, Nmap, SOC fundamentals",
+  },
+  {
+    name: "Systems & network",
+    detail: "Windows and Linux admin, LAN/Wi-Fi troubleshooting, endpoint maintenance",
+  },
+  {
+    name: "Programming",
+    detail: "Python, SQL, HTML/CSS, JavaScript, PHP, React",
+  },
+  {
+    name: "Tools",
+    detail: "Git, GitHub, VS Code, Docker basics",
+  },
+];
 
-function FloatingStar({ delay = 0, x = 0 }) {
-  const reduce = useReducedMotion();
-  return (
-    <motion.div
-      className="absolute text-[var(--color-game-yellow)] pointer-events-none text-2xl"
-      style={{ left: `${x}%`, top: "-5%" }}
-      animate={reduce ? {} : { y: ["0%", "110vh"], opacity: [0, 1, 1, 0] }}
-      transition={{ duration: 8, repeat: Infinity, delay, ease: "linear" }}
-    >
-      ✦
-    </motion.div>
-  );
-}
-
-function BouncingSprite({ size = 48, x = 50, delay = 0, variant = "ghost" }) {
-  const reduce = useReducedMotion();
-  return (
-    <motion.div
-      className="absolute pointer-events-none"
-      style={{ left: `${x}%`, bottom: "8%" }}
-      animate={reduce ? {} : { y: [0, -30, 0] }}
-      transition={{ duration: 1.6, repeat: Infinity, delay, ease: "easeInOut" }}
-    >
-      <PixelMonster size={size} variant={variant} />
-    </motion.div>
-  );
-}
-
-function PressStart() {
-  const reduce = useReducedMotion();
-  return (
-    <motion.div
-      className="text-2xl text-[var(--color-game-yellow)] mt-6"
-      animate={reduce ? {} : { opacity: [1, 0, 1] }}
-      transition={{ duration: 1.2, repeat: Infinity }}
-    >
-      ▼ PRESS START ▼
-    </motion.div>
-  );
-}
-
-function HPBar({ value = 100, flash = false }) {
-  const reduce = useReducedMotion();
-  return (
-    <div className="pixel-bar-bg w-48 relative">
-      <motion.div
-        className="pixel-bar-fill"
-        initial={{ width: 0 }}
-        animate={{ width: `${value}%` }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
-      ></motion.div>
-      {flash && !reduce && (
-        <motion.div
-          className="absolute inset-0 bg-red-500 opacity-70"
-          animate={{ opacity: [0.7, 0, 0.7, 0] }}
-          transition={{ duration: 0.5, repeat: Infinity }}
-        />
-      )}
-    </div>
-  );
-}
-
-
-function XPBar({ value = 75 }) {
-  return (
-    <div className="pixel-bar-bg w-48" style={{ background: "#110826" }}>
-      <motion.div
-        className="h-full"
-        style={{ background: "var(--color-game-cyan)" }}
-        initial={{ width: 0 }}
-        animate={{ width: `${value}%` }}
-        transition={{ duration: 1.5, delay: 0.3 }}
-      ></motion.div>
-    </div>
-  );
-}
-
-function ScreenTransition({ children, keyId }) {
-  const reduce = useReducedMotion();
-  return (
-    <motion.div
-      key={keyId}
-      initial={reduce ? false : { opacity: 0, x: 30 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -30 }}
-      transition={{ duration: 0.35 }}
-      onAnimationStart={() => sfx.appear()}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-function StatRow({ label, value }) {
-  return (
-    <motion.div
-      whileHover={{ x: 5 }}
-      onMouseEnter={() => sfx.hover()}
-      className="flex gap-4 border-b-2 border-dashed border-white/30 pb-2"
-    >
-      <span className="text-[var(--color-game-yellow)]">► {label}:</span>
-      <span>{value}</span>
-    </motion.div>
-  );
-}
-
-// ====== MAIN APP ======
+const timeline = [
+  {
+    period: "2018 — 2023",
+    title: "Gunadarma University",
+    detail: "Bachelor of Information Systems · GPA 3.17/4.00.",
+  },
+  {
+    period: "2020 — 2021",
+    title: "Food & Beverage Ordering System",
+    detail: "Built ordering, menu, auth, and admin flows with HTML, CSS, JavaScript, PHP, and MySQL.",
+  },
+  {
+    period: "Jan 2023 — Dec 2023",
+    title: "IT Support · PT. Lawu Cakra Sarana",
+    detail: "Windows administration, hardware and network troubleshooting, endpoint security maintenance.",
+  },
+  {
+    period: "Feb 2024 — Jul 2024",
+    title: "Meme token web development",
+    detail: "Pre-launch sites for token identity, roadmap, and community information.",
+  },
+  {
+    period: "2025",
+    title: "Cybersecurity skill path",
+    detail: "Google Cybersecurity Professional Certificate and Introduction to SOC training.",
+  },
+  {
+    period: "Jan 2026 — Mar 2026",
+    title: "Warehouse Administrator",
+    detail: "Inventory, ERP workflows, and stock audits at PT Kakha Berdaya Bersama.",
+  },
+  {
+    period: "2026 — now",
+    title: "Home SOC lab",
+    detail: "Cisco Introduction to Cybersecurity; building Wazuh, Suricata, and log monitoring practice lab.",
+  },
+];
 
 export default function App() {
-  const [ready, setReady] = useState(false);
-  const [screen, setScreen] = useState("menu");
-  const [loadingGame, setLoadingGame] = useState(false);
-  const [hp, setHp] = useState(100);
-
-  useEffect(() => {
-    if (ready) {
-      const interval = setInterval(() => {
-        setHp(prev => Math.max(0, prev - Math.floor(Math.random() * 5)));
-      }, 5000); // Simulate HP decay
-
-      return () => clearInterval(interval);
-    }
-  }, [ready]);
-
-  const handleStart = () => {
-    sfx.start();
-    setReady(true);
-  };
-
-  const handleTab = (id) => {
-    sfx.click();
-    setScreen(id);
-    if (id === 'game') {
-      setLoadingGame(true);
-      setTimeout(() => setLoadingGame(false), 1500); // Simulate loading time
-    }
-  };
+  const [menuOpen, setMenuOpen] = useState(false);
+  const featured = projectsData.find((p) => p.featured);
+  const rest = projectsData.filter((p) => !p.featured);
 
   return (
-    <div className="min-h-screen p-6 max-w-5xl mx-auto relative overflow-hidden grid-bg">
-      <FloatingStar x={10} delay={0} />
-      <FloatingStar x={30} delay={2} />
-      <FloatingStar x={55} delay={4} />
-      <FloatingStar x={75} delay={1} />
-      <FloatingStar x={90} delay={3} />
+    <div>
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:bg-[var(--color-gold)] focus:text-black focus:px-3 focus:py-2 focus:rounded-[8px]"
+      >
+        Skip to content
+      </a>
 
-      {ready && (
-        <>
-          <BouncingSprite x={12} delay={0} variant="ghost" />
-          <BouncingSprite x={85} delay={0.5} variant="monster" />
-          <BouncingSprite x={50} delay={1} variant="coin" />
-        </>
-      )}
-
-      {/* READY SCREEN */}
-      {!ready && (
-        <motion.div
-          className="min-h-screen absolute inset-0 flex flex-col items-center justify-center p-4 z-10"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <motion.div
-            className="pixel-box pixel-box-pink max-w-md w-full text-center space-y-6"
-            initial={{ scale: 0.8, y: -20 }}
-            animate={{ scale: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            onAnimationComplete={() => sfx.appear()}
-          >
-            <div className="flex justify-center mb-4">
-              <PixelPortrait src="/avatar.jpg" size={120} />
-            </div>
-            <motion.h1
-              className="text-4xl text-[var(--color-game-yellow)] text-pixel-shadow"
-              animate={{ scale: [1, 1.05, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
+      <header className="nav">
+        <div className="site-shell nav-inner">
+          <a href="#top" className="nav-brand">
+            Ulang Rahmad
+          </a>
+          <nav className="nav-links" aria-label="Primary">
+            {nav.map((item) => (
+              <a key={item.href} href={item.href}>
+                {item.label}
+              </a>
+            ))}
+          </nav>
+          <div className="flex items-center gap-2">
+            <a href="/cv-ulang-rahmad-choliq.pdf" className="nav-cta" download>
+              <Download size={14} /> CV
+            </a>
+            <button
+              type="button"
+              className="btn btn-ghost md:hidden"
+              aria-expanded={menuOpen}
+              aria-label="Toggle menu"
+              onClick={() => setMenuOpen((v) => !v)}
             >
-              LET'S PLAY GAME
-            </motion.h1>
-            <p className="text-2xl">ARE YOU READY ?</p>
-            <div className="flex justify-center gap-4 pt-4">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onMouseEnter={() => sfx.hover()}
-                onClick={handleStart}
-                className="pixel-button pixel-button-yellow"
-              >
-                ► YES
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onMouseEnter={() => sfx.hover()}
-                onClick={() => {
-                  sfx.error();
-                  alert("GAME OVER");
-                }}
-                className="pixel-button"
-              >
-                ✖ NO
-              </motion.button>
-            </div>
-            <PressStart />
-          </motion.div>
-        </motion.div>
-      )}
-
-      {ready && (
-        <>
-          <motion.div
-            className="pixel-box flex justify-between items-center flex-wrap gap-4"
-            initial={{ y: -30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="flex items-center gap-3">
-              <PixelPortrait src="/avatar.jpg" size={48} />
-              <span>ULNGRHMD</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Heart className="text-[var(--color-game-pink)]" size={20} />
-              <span>HP</span>
-              <HPBar value={hp} flash={hp < 20} /> {/* HP bar flash */}
-            </div>
-            <div className="flex items-center gap-3">
-              <span>XP</span>
-              <XPBar value={75} />
-            </div>
-          </motion.div>
-
-          <motion.div
-            className="flex gap-3 justify-center flex-wrap py-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            {[
-              { id: "menu", label: "START", icon: Play },
-              { id: "game", label: "PLAY GAME", icon: Play },
-              { id: "about", label: "CHARACTER", icon: User },
-              { id: "skills", label: "STATS", icon: Shield },
-              { id: "roadmap", label: "ROADMAP", icon: Map },
-              { id: "projects", label: "QUESTS", icon: Trophy },
-              { id: "gallery", label: "GALLERY", icon: Image },
-              { id: "contact", label: "CONTACT", icon: Terminal },
-            ].map((tab, i) => {
-              const Icon = tab.icon;
-              const active = screen === tab.id;
-              return (
-                <motion.button
-                  key={tab.id}
-                  whileHover={{ y: -3 }}
-                  whileTap={{ y: 2 }}
-                  onMouseEnter={() => sfx.hover()}
-                  onClick={() => handleTab(tab.id)}
-                  initial={{ y: -20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.3 + i * 0.08 }}
-                  className={`pixel-button flex items-center gap-2 ${active ? "pixel-button-yellow" : ""}`}
-                >
-                  <Icon size={18} />
-                  {tab.label}
-                </motion.button>
-              );
-            })}
-          </motion.div>
-
-          <div className="mt-6">
-            {screen === "menu" && (
-              <ScreenTransition keyId="menu">
-                <div className="pixel-box text-center space-y-6 py-16 relative">
-                  <motion.h2
-                    className="text-6xl text-[var(--color-game-pink)] text-pixel-shadow"
-                    animate={{ y: [0, -5, 0] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
-                    WELCOME
-                  </motion.h2>
-                  <p className="text-2xl max-w-xl mx-auto">
-                    INFORMATION SYSTEMS GRADUATE BUILDING A CAREER IN CYBERSECURITY
-                    <BlinkCursor />
-                  </p>
-                  <div className="pt-4 flex gap-4 justify-center flex-wrap">
-                    <motion.a
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onMouseEnter={() => sfx.hover()}
-                      onClick={() => sfx.coin()}
-                      href="/cv-ulang-rahmad-choliq.pdf"
-                      download
-                      className="pixel-button pixel-button-yellow"
-                    >
-                      ► DOWNLOAD CV
-                    </motion.a>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onMouseEnter={() => sfx.hover()}
-                      onClick={() => handleTab("projects")}
-                      className="pixel-button"
-                    >
-                      ► VIEW QUESTS
-                    </motion.button>
-                  </div>
-                </div>
-              </ScreenTransition>
-            )}
-
-            {screen === "game" && (
-              <ScreenTransition keyId="game">
-                <div className="pixel-box text-center space-y-6 py-8">
-                  <h2 className="text-4xl text-[var(--color-game-green)] text-pixel-shadow">► MINI GAME</h2>
-                  {loadingGame ? (
-                    <motion.p
-                      className="text-2xl text-[var(--color-game-yellow)]"
-                      animate={{ opacity: [1, 0.4, 1] }}
-                      transition={{ duration: 1, repeat: Infinity }}
-                    >
-                      INITIALIZING...
-                    </motion.p>
-                  ) : (
-                    <SimpleGame />
-                  )}
-                </div>
-              </ScreenTransition>
-            )}
-
-            {screen === "about" && (
-              <ScreenTransition keyId="about">
-                <div className="pixel-box space-y-6">
-                  <div className="flex items-end justify-between gap-4 flex-wrap">
-                    <h2 className="text-4xl text-[var(--color-game-cyan)]">► CHARACTER SELECT</h2>
-                    <p className="text-xl text-[var(--color-game-yellow)]">STATUS: READY</p>
-                  </div>
-
-                  <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-6 items-start">
-                    <motion.div
-                      className="border-4 border-[var(--color-game-border)] bg-black flex justify-center items-end overflow-hidden"
-                      whileHover={{ scale: 1.01 }}
-                    >
-                      <PixelPortrait src="/avatar.jpg" size={320} portrait />
-                    </motion.div>
-
-                    <div className="space-y-4 text-xl">
-                      <div className="pixel-box p-4 border-[var(--color-game-cyan)]">
-                        <p className="text-[var(--color-game-yellow)] mb-2">► PLAYER DATA</p>
-                        <StatRow label="CLASS" value="SOC ANALYST / WEB DEV" />
-                        <StatRow label="LOCATION" value="DEPOK, INDONESIA" />
-                        <StatRow label="LEVEL" value="GRADUATE (2023)" />
-                        <StatRow label="GUILD" value="GUNADARMA UNIVERSITY" />
-                      </div>
-                      <div className="pixel-box p-4 border-[var(--color-game-pink)]">
-                        <p className="text-[var(--color-game-yellow)] mb-2">► BIO</p>
-                        <p>IT SUPPORT BACKGROUND TRANSITIONING INTO A CYBERSECURITY THREAT DETECTOR. I HAVE HANDS-ON EXPERIENCE IN WINDOWS ADMINISTRATION, WAZUH SIEM, SURICATA IDS, AND NETWORK SECURITY MONITORING. BEYOND SECURITY, I AM A FULL-STACK WEB DEVELOPER WHO ENJOYS BUILDING INTERACTIVE, PIXEL-ART INSPIRED APPLICATIONS. CURRENTLY FOCUSED ON BUILDING A HOMELAB ENVIRONMENT TO MASTER THREAT HUNTING AND LOG ANALYSIS WORKFLOWS.</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr] pt-2">
-                    <article className="border-2 border-[var(--color-game-border)] p-4 bg-[var(--color-game-card)] space-y-2">
-                      <p className="text-[var(--color-game-text-secondary)]">► WEB APPLICATION DEVELOPMENT</p>
-                      <h3 className="text-2xl text-[var(--color-game-text-primary)]">FOOD & BEVERAGE ORDERING SYSTEM</h3>
-                      <p className="text-xl text-[var(--color-game-text-secondary)]">A comprehensive web-based application designed to streamline restaurant and cafe operations. It features menu categorization, a secure online ordering workflow, user authentication, and robust admin controls for managing orders and inventory in real time.</p>
-                    </article>
-                    <div className="grid gap-4">
-                      <article className="border-2 border-[var(--color-game-border)] p-4 bg-[var(--color-game-card)] space-y-2">
-                        <p className="text-[var(--color-game-text-secondary)]">► PROJECT</p>
-                        <h3 className="text-2xl text-[var(--color-game-text-primary)]">LYCADESIGN</h3>
-                        <p className="text-xl text-[var(--color-game-text-secondary)]">Architecture and interior design website for LYCA Design Indonesia.</p>
-                      </article>
-                      <article className="border-2 border-[var(--color-game-border)] p-4 bg-[var(--color-game-card)] space-y-2">
-                        <p className="text-[var(--color-game-text-secondary)]">► PROJECT</p>
-                        <h3 className="text-2xl text-[var(--color-game-text-primary)]">CRYPTO LANDING PAGE</h3>
-                        <p className="text-xl text-[var(--color-game-text-secondary)]">Pre-launch website for a meme token project, covering token identity, roadmap, and launch information.</p>
-                      </article>
-                    </div>
-                  </div>
-                </div>
-              </ScreenTransition>
-            )}
-
-            {screen === "skills" && (
-              <ScreenTransition keyId="skills">
-                <div className="pixel-box space-y-6">
-                  <h2 className="text-4xl text-[var(--color-game-pink)]">► SKILL TREE</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xl">
-                    {[
-                      { name: "CYBERSECURITY", val: "WAZUH · SIEM · SURICATA · WIRESHARK · NMAP", color: "pink" },
-                      { name: "SYSTEM & NETWORK", val: "WINDOWS/LINUX · LAN/WIFI · TROUBLESHOOTING", color: "cyan" },
-                      { name: "PROGRAMMING", val: "PYTHON · SQL · HTML/CSS · JAVASCRIPT · PHP · REACT", color: "yellow" },
-                      { name: "TOOLS", val: "GIT · GITHUB · VS CODE · DOCKER", color: "green" },
-                    ].map((s, i) => (
-                      <motion.div
-                        key={s.name}
-                        initial={{ x: -30, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        transition={{ delay: i * 0.1 }}
-                        whileHover={{ scale: 1.03, x: 5 }}
-                        onMouseEnter={() => sfx.hover()}
-                        className="border-2 border-white p-4 cursor-pointer"
-                      >
-                        <p className={`text-[var(--color-game-${s.color})] mb-2`}>► {s.name}</p>
-                        <p>{s.val}</p>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              </ScreenTransition>
-            )}
-
-            {screen === "roadmap" && (
-              <ScreenTransition keyId="roadmap">
-                <div className="pixel-box space-y-6">
-                  <div className="flex items-end justify-between gap-4 flex-wrap">
-                    <h2 className="text-4xl text-[var(--color-game-cyan)]">► PLAYER ROADMAP</h2>
-                    <p className="text-xl text-[var(--color-game-yellow)]">2018 — NOW</p>
-                  </div>
-                  <p className="text-xl">MAIN QUEST: BUILDING A CAREER IN CYBERSECURITY WHILE KEEPING WEB DEVELOPMENT ACTIVE.</p>
-                  <ol className="relative border-l-4 border-[var(--color-game-cyan)] ml-3 space-y-5 pl-6">
-                    {[
-                      ["2018 — 2023", "UNIVERSITAS GUNADARMA", "Bachelor of Information Systems · GPA 3.17/4.00."],
-                      ["2020 — 2021", "WEB DEVELOPMENT QUEST", "Built Food & Beverage Ordering System using HTML, CSS, JavaScript, PHP, and MySQL."],
-                      ["JAN 2023 — DEC 2023", "IT SUPPORT · PT. LAWU CAKRA SARANA", "Windows administration, hardware and network troubleshooting, endpoint security maintenance."],
-                      ["FEB 2024 — JUL 2024", "MEME TOKEN WEB DEVELOPMENT", "Built responsive pre-launch websites for meme token projects with token identity, roadmap, and community information."],
-                      ["2025", "CYBERSECURITY SKILL PATH", "Completed Google Cybersecurity Professional Certificate and Introduction to SOC training."],
-                      ["JAN 2026 — MAR 2026", "WAREHOUSE ADMINISTRATOR", "Managed inventory, ERP workflows, and stock audits at PT Kakha Berdaya Bersama."],
-                      ["2026 — NOW", "HOME SOC LAB", "Learning Cisco Introduction to Cybersecurity and building Wazuh, Suricata, and log monitoring lab."],
-                    ].map((item, index) => (
-                      <motion.li
-                        key={item[0]}
-                        initial={{ x: -24, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        transition={{ delay: index * 0.09 }}
-                        whileHover={{ scale: 1.02, x: 5 }}
-                        onMouseEnter={() => sfx.hover()}
-                        className="relative border-2 border-[var(--color-game-border)] bg-[var(--color-game-card)] p-4"
-                      >
-                        <span className="absolute -left-[2.55rem] top-5 w-4 h-4 bg-[var(--color-game-yellow)] border-2 border-[var(--color-game-border)]" />
-                        <p className="text-[var(--color-game-text-muted)]">{item[0]}</p>
-                        <h3 className="text-2xl text-[var(--color-game-text-primary)]">{item[1]}</h3>
-                        <p className="text-xl text-[var(--color-game-text-secondary)]">{item[2]}</p>
-                      </motion.li>
-                    ))}
-                  </ol>
-                </div>
-              </ScreenTransition>
-            )}
-
-            {screen === "projects" && (
-              <ScreenTransition keyId="projects">
-                <div className="pixel-box space-y-6">
-                  <div className="flex items-end justify-between gap-4 flex-wrap">
-                    <h2 className="text-4xl text-[var(--color-game-yellow)]">► COMPLETED QUESTS</h2>
-                    <p className="text-xl text-[var(--color-game-cyan)]">3 PROJECTS LOGGED</p>
-                  </div>
-
-                  <div className="grid gap-4">
-                    {[
-                      {
-                        num: "01",
-                        title: "CRYPTO LANDING PAGES",
-                        stack: "HTML · CSS · JAVASCRIPT",
-                        link: "https://github.com/ulangrahmad/website-owl",
-                        note: "Responsive pre-launch website for a meme token, with token identity, roadmap, and community information.",
-                      },
-                      {
-                        num: "02",
-                        title: "LYCA DESIGN INDONESIA",
-                        stack: "HTML · CSS · JAVASCRIPT",
-                        link: "https://github.com/ulangrahmad/Lycadedesign",
-                        note: "Architecture and interior design website for LYCA Design Indonesia.",
-                      },
-                      {
-                        num: "03",
-                        title: "FOOD & BEVERAGE ORDERING SYSTEM",
-                        stack: "HTML · CSS · JAVASCRIPT · PHP · MYSQL",
-                        link: "",
-                        note: "Online ordering, menu catalog, authentication, and admin flow.",
-                      },
-                    ].map((p, i) => (
-                      <motion.article
-                        key={p.num}
-                        initial={{ y: 30, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: i * 0.15 }}
-                        whileHover={{ x: 8 }}
-                        onMouseEnter={() => sfx.hover()}
-                        className="border-2 border-[var(--color-game-border)] p-4 space-y-3 bg-[var(--color-game-card)]"
-                      >
-                        <div className="flex justify-between items-start gap-4 flex-wrap">
-                          <div>
-                            <p className="text-[var(--color-game-text-muted)]">► PROJECT {p.num}</p>
-                            <h3 className="text-2xl text-[var(--color-game-text-primary)]">{p.title}</h3>
-                          </div>
-                          <span className="text-[var(--color-game-green)]">★ COMPLETED</span>
-                        </div>
-                        <p className="text-[var(--color-game-yellow)]">STACK: {p.stack}</p>
-                        <p className="text-xl text-[var(--color-game-text-secondary)]">{p.note}</p>
-                        {p.link ? (
-                          <a
-                            href={p.link}
-                            target="_blank"
-                            rel="noreferrer"
-                            onClick={() => sfx.coin()}
-                            className="text-[var(--color-game-accent)] underline inline-flex items-center gap-1 hover:text-[var(--color-game-accent-hover)]"
-                          >
-                            ► VIEW REPO <ArrowRight size={16} />
-                          </a>
-                        ) : (
-                          <p className="text-[var(--color-game-pink)]">PRIVATE / NO PUBLIC LINK</p>
-                        )}
-                      </motion.article>
-                    ))}
-                  </div>
-                </div>
-              </ScreenTransition>
-            )}
-
-            {screen === "gallery" && (
-              <ScreenTransition keyId="gallery">
-                <div className="pixel-box">
-                  <ProjectGallery />
-                </div>
-              </ScreenTransition>
-            )}
-
-            {screen === "contact" && (
-              <ScreenTransition keyId="contact">
-                <div className="pixel-box space-y-4">
-                  <h2 className="text-4xl text-[var(--color-game-yellow)]">► SAVE POINT / CONTACT</h2>
-                  <div className="space-y-3 text-xl">
-                    {[
-                      ["EMAIL", "ulangrahmad121@gmail.com", "mailto:ulangrahmad121@gmail.com", <Mail size={20} />],
-                      ["LINKEDIN", "ULANG RAHMAD CHOLIQ", "https://www.linkedin.com/in/ulang-rahmad-choliq-4a565b377/", <Link size={20} />],
-                      ["GITHUB", "github.com/ulangrahmad", "https://github.com/ulangrahmad", <Link size={20} />],
-                      ["RESUME", "DOWNLOAD CV.PDF", "/cv-ulang-rahmad-choliq.pdf", <ArrowRight size={20} />],
-                    ].map(([label, val, href, icon], i) => (
-                      <motion.a
-                        key={label}
-                        href={href}
-                        target={href.startsWith("http") ? "_blank" : undefined}
-                        rel={href.startsWith("http") ? "noreferrer" : undefined}
-                        download={href.endsWith(".pdf")}
-                        initial={{ x: -20, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        transition={{ delay: i * 0.1 }}
-                        whileHover={{ x: 5 }}
-                        onMouseEnter={() => sfx.hover()}
-                        className="flex justify-between border-2 border-white p-3"
-                      >
-                        <span className="text-[var(--color-game-cyan)] flex items-center gap-2">{icon} {label}</span>
-                        <span>{val}</span>
-                      </motion.a>
-                    ))}
-                  </div>
-                </div>
-              </ScreenTransition>
-            )}
+              {menuOpen ? <X size={16} /> : <Menu size={16} />}
+            </button>
           </div>
+        </div>
+        {menuOpen && (
+          <div className="site-shell pb-4 md:hidden flex flex-col gap-3 border-t border-[var(--color-border)] pt-3">
+            {nav.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={() => setMenuOpen(false)}
+                className="text-[var(--color-soft)]"
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
+        )}
+      </header>
 
-          <motion.div
-            className="text-center text-sm opacity-70 mt-12"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.7 }}
-            transition={{ delay: 1 }}
-          >
-            © {new Date().getFullYear()} ULNGRHMD · END OF TRANSMISSION
-          </motion.div>
-        </>
-      )}
+      <main id="main">
+        <section id="top" className="site-shell hero">
+          <Reveal className="hero-copy">
+            <p className="section-label">Depok, Indonesia</p>
+            <h1>
+              Ulang Rahmad<span>.</span>
+            </h1>
+            <p className="hero-lead">
+              Information Systems graduate moving from IT support into SOC and blue-team work.
+              I build practical web tools on the side and practice detection skills in a home lab.
+            </p>
+            <div className="hero-meta">
+              <span>SOC / Blue Team focus</span>
+              <span>Web development</span>
+              <span>Gunadarma University · 2023</span>
+            </div>
+            <div className="hero-actions">
+              <a href="#work" className="btn btn-primary">
+                Selected work <ArrowDownRight size={16} />
+              </a>
+              <a href="#contact" className="btn btn-ghost">
+                Contact
+              </a>
+            </div>
+          </Reveal>
+          <Reveal delay={0.08}>
+            <div className="about-photo">
+              <img src="/avatar.jpg" alt="Ulang Rahmad Choliq outdoors" />
+            </div>
+          </Reveal>
+        </section>
+
+        <hr className="rule site-shell" />
+
+        <section id="work" className="section site-shell">
+          <Reveal>
+            <p className="section-label">Selected work</p>
+            <h2 className="section-title">Projects built around real constraints</h2>
+            <p className="section-lead">
+              Each project started from a concrete problem — slow ordering, a studio without a clear portfolio site,
+              or a token project that needed a pre-launch page before anything public existed.
+            </p>
+          </Reveal>
+
+          <div className="projects-stack">
+            {featured && (
+              <Reveal className="project-card featured">
+                <div className="project-media">
+                  <img src={featured.image} alt="" />
+                </div>
+                <div className="project-body">
+                  <p className="project-kicker">Featured · {featured.year}</p>
+                  <h3>{featured.title}</h3>
+                  <p className="project-problem">
+                    <strong>Problem. </strong>
+                    {featured.problem}
+                  </p>
+                  <p className="project-problem">
+                    <strong>What I did. </strong>
+                    {featured.solution}
+                  </p>
+                  <div className="project-meta">
+                    <span>{featured.role}</span>
+                    <span>{featured.techStack.join(" · ")}</span>
+                  </div>
+                  <p className="project-problem">{featured.outcome}</p>
+                </div>
+              </Reveal>
+            )}
+
+            <div className="grid gap-6">
+              {rest.map((project, index) => (
+                <Reveal key={project.id} delay={0.05 * (index + 1)} className={`project-card ${index % 2 === 1 ? "reverse" : ""}`}>
+                  <div className="project-media">
+                    <img src={project.image} alt="" />
+                  </div>
+                  <div className="project-body">
+                    <p className="project-kicker">{project.year} · {project.role}</p>
+                    <h3>{project.title}</h3>
+                    <p className="project-problem">
+                      <strong>Problem. </strong>
+                      {project.problem}
+                    </p>
+                    <p className="project-problem">{project.solution}</p>
+                    <div className="project-meta">
+                      <span>{project.techStack.join(" · ")}</span>
+                    </div>
+                    {project.link ? (
+                      <a href={project.link} target="_blank" rel="noreferrer" className="project-link inline-flex items-center gap-1">
+                        Repository <ArrowUpRight size={14} />
+                      </a>
+                    ) : (
+                      <span className="text-[var(--color-muted)] text-sm">Private / no public link</span>
+                    )}
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="section site-shell pt-0">
+          <Reveal>
+            <p className="section-label">Gallery</p>
+            <h2 className="section-title">Visual notes from the work</h2>
+            <p className="section-lead">
+              Stylized previews — click a card for problem, approach, and outcome.
+            </p>
+          </Reveal>
+          <Reveal delay={0.05}>
+            <ProjectGallery />
+          </Reveal>
+        </section>
+
+        <hr className="rule site-shell" />
+
+        <section id="about" className="section site-shell">
+          <div className="about-grid">
+            <Reveal>
+              <div className="about-photo">
+                <img src="/avatar.jpg" alt="Portrait of Ulang Rahmad Choliq" />
+              </div>
+            </Reveal>
+            <Reveal delay={0.06}>
+              <p className="section-label">About</p>
+              <h2 className="section-title">From support tickets to detection practice</h2>
+              <div className="about-copy">
+                <p>
+                  I started in IT support — fixing endpoints, untangling network issues, and keeping Windows
+                  environments usable for people who just needed things to work. That day-to-day work pushed me
+                  toward security: once you see how systems fail, you start caring how they get abused.
+                </p>
+                <p>
+                  Now I am training for SOC and blue-team roles. I study SIEM and IDS tooling, run a home lab with
+                  Wazuh and Suricata, and keep writing web interfaces when a project needs a clear front door.
+                  I prefer small, readable systems over flashy demos.
+                </p>
+              </div>
+              <dl className="about-facts">
+                <div className="fact">
+                  <dt>Focus</dt>
+                  <dd>SOC analyst / blue team</dd>
+                </div>
+                <div className="fact">
+                  <dt>Location</dt>
+                  <dd>Depok, Indonesia</dd>
+                </div>
+                <div className="fact">
+                  <dt>Education</dt>
+                  <dd>Gunadarma University · Information Systems · 2023</dd>
+                </div>
+                <div className="fact">
+                  <dt>Also</dt>
+                  <dd>Web development for product and portfolio sites</dd>
+                </div>
+              </dl>
+            </Reveal>
+          </div>
+        </section>
+
+        <section id="skills" className="section site-shell pt-0">
+          <Reveal>
+            <p className="section-label">Skills</p>
+            <h2 className="section-title">Tools I actually use</h2>
+          </Reveal>
+          <div className="skills-grid">
+            {skills.map((skill, i) => (
+              <Reveal key={skill.name} delay={i * 0.04} className="skill-card">
+                <h3>{skill.name}</h3>
+                <p>{skill.detail}</p>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+
+        <hr className="rule site-shell" />
+
+        <section id="timeline" className="section site-shell">
+          <Reveal>
+            <p className="section-label">Timeline</p>
+            <h2 className="section-title">Path so far</h2>
+            <p className="section-lead">
+              Education, support work, product sites, and the current move into cybersecurity practice.
+            </p>
+          </Reveal>
+          <div className="timeline">
+            {timeline.map((item, i) => (
+              <Reveal key={item.period + item.title} delay={i * 0.03} className="timeline-item">
+                <time>{item.period}</time>
+                <h3>{item.title}</h3>
+                <p>{item.detail}</p>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+
+        <section id="play" className="section site-shell pt-0">
+          <Reveal>
+            <p className="section-label">Aside</p>
+            <h2 className="section-title">A small game</h2>
+            <p className="section-lead">
+              Optional break. Arrow keys or on-screen controls on mobile.
+            </p>
+          </Reveal>
+          <Reveal delay={0.05} className="game-panel">
+            <SimpleGame />
+          </Reveal>
+        </section>
+
+        <hr className="rule site-shell" />
+
+        <section id="contact" className="section site-shell">
+          <Reveal>
+            <p className="section-label">Contact</p>
+            <h2 className="section-title">Say hello</h2>
+            <p className="section-lead">
+              Open to SOC junior roles, blue-team learning paths, and small web projects with a clear brief.
+            </p>
+          </Reveal>
+          <Reveal delay={0.05} className="contact-list">
+            <a className="contact-row" href="mailto:ulangrahmad121@gmail.com">
+              <span>Email</span>
+              <span>ulangrahmad121@gmail.com</span>
+            </a>
+            <a
+              className="contact-row"
+              href="https://www.linkedin.com/in/ulang-rahmad-choliq-4a565b377/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <span>LinkedIn</span>
+              <span>Ulang Rahmad Choliq</span>
+            </a>
+            <a className="contact-row" href="https://github.com/ulangrahmad" target="_blank" rel="noreferrer">
+              <span>GitHub</span>
+              <span>github.com/ulangrahmad</span>
+            </a>
+            <a className="contact-row" href="/cv-ulang-rahmad-choliq.pdf" download>
+              <span>Resume</span>
+              <span>Download CV.pdf</span>
+            </a>
+          </Reveal>
+        </section>
+      </main>
+
+      <footer className="site-shell footer">
+        <span>© {new Date().getFullYear()} Ulang Rahmad Choliq</span>
+        <span>Editorial layout · v2</span>
+      </footer>
     </div>
   );
 }

@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { sfx } from "../utils/sfx";
 
 const WIDTH = 420;
 const HEIGHT = 360;
@@ -12,6 +11,11 @@ function makeEnemy(id) {
     y: -20,
     speed: 0.7 + Math.random() * 0.9,
   };
+}
+
+function holdKey(keysRef, code, active) {
+  if (active) keysRef.current.add(code);
+  else keysRef.current.delete(code);
 }
 
 export default function SimpleGame() {
@@ -37,7 +41,6 @@ export default function SimpleGame() {
     setScore(0);
     setLives(3);
     setRunning(true);
-    sfx.start();
   }, []);
 
   const shoot = useCallback(() => {
@@ -45,7 +48,6 @@ export default function SimpleGame() {
     if (!state || state.shootCooldown > 0 || state.gameOver) return;
     state.bullets.push({ x: state.playerX + 10, y: PLAYER_Y - 8 });
     state.shootCooldown = 14;
-    sfx.select();
   }, []);
 
   const update = useCallback(() => {
@@ -71,7 +73,6 @@ export default function SimpleGame() {
         enemy.x = 20 + Math.random() * (WIDTH - 40);
         enemy.y = -20;
         enemy.speed = 0.7 + Math.random() * 0.9;
-        sfx.error();
       }
     }
 
@@ -84,7 +85,6 @@ export default function SimpleGame() {
           enemy.y = -20;
           enemy.speed = 0.8 + Math.random() * 1.2;
           state.score += 10;
-          sfx.coin();
         }
       }
     }
@@ -94,32 +94,11 @@ export default function SimpleGame() {
     if (state.lives <= 0) {
       state.gameOver = true;
       setRunning(false);
-      sfx.error();
     }
 
     setScore(state.score);
     setLives(state.lives);
   }, [running, shoot]);
-
-  const drawPixelShip = (ctx, x, y) => {
-    ctx.fillStyle = "#00f0ff";
-    ctx.fillRect(x + 10, y, 8, 8);
-    ctx.fillRect(x + 6, y + 8, 16, 8);
-    ctx.fillRect(x + 2, y + 16, 24, 8);
-    ctx.fillStyle = "#ffd000";
-    ctx.fillRect(x + 10, y + 24, 8, 6);
-  };
-
-  const drawEnemy = (ctx, x, y) => {
-    ctx.fillStyle = "#ff5277";
-    ctx.fillRect(x, y, 24, 8);
-    ctx.fillRect(x + 4, y + 8, 16, 8);
-    ctx.fillRect(x, y + 16, 6, 6);
-    ctx.fillRect(x + 18, y + 16, 6, 6);
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(x + 6, y + 9, 4, 4);
-    ctx.fillRect(x + 14, y + 9, 4, 4);
-  };
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -130,32 +109,41 @@ export default function SimpleGame() {
     ctx.imageSmoothingEnabled = false;
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
-    ctx.fillStyle = "#110826";
+    ctx.fillStyle = "#161616";
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
-    ctx.fillStyle = "rgba(255,255,255,0.18)";
-    for (let i = 0; i < 32; i += 1) {
+    ctx.fillStyle = "rgba(255,255,255,0.12)";
+    for (let i = 0; i < 28; i += 1) {
       const x = (i * 53 + state.score) % WIDTH;
       const y = (i * 37 + state.score * 2) % HEIGHT;
       ctx.fillRect(x, y, 2, 2);
     }
 
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle = "#f0eee8";
     for (const bullet of state.bullets) ctx.fillRect(bullet.x, bullet.y, 4, 12);
-    for (const enemy of state.enemies) drawEnemy(ctx, enemy.x, enemy.y);
-    drawPixelShip(ctx, state.playerX, PLAYER_Y);
 
-    ctx.fillStyle = "#ffd000";
-    ctx.font = "24px VT323";
-    ctx.fillText(`SCORE ${state.score}`, 12, 26);
-    ctx.fillText(`HP ${Math.max(0, state.lives)}`, WIDTH - 70, 26);
+    ctx.fillStyle = "#a85656";
+    for (const enemy of state.enemies) {
+      ctx.fillRect(enemy.x, enemy.y, 24, 8);
+      ctx.fillRect(enemy.x + 4, enemy.y + 8, 16, 8);
+    }
+
+    ctx.fillStyle = "#b8945a";
+    ctx.fillRect(state.playerX + 10, PLAYER_Y, 8, 8);
+    ctx.fillRect(state.playerX + 6, PLAYER_Y + 8, 16, 8);
+    ctx.fillRect(state.playerX + 2, PLAYER_Y + 16, 24, 8);
+
+    ctx.fillStyle = "#c8c4bc";
+    ctx.font = "14px Inter, sans-serif";
+    ctx.fillText(`SCORE ${state.score}`, 12, 22);
+    ctx.fillText(`HP ${Math.max(0, state.lives)}`, WIDTH - 62, 22);
 
     if (state.gameOver) {
-      ctx.fillStyle = "rgba(0,0,0,0.72)";
+      ctx.fillStyle = "rgba(0,0,0,0.7)";
       ctx.fillRect(0, 0, WIDTH, HEIGHT);
-      ctx.fillStyle = "#ff5277";
-      ctx.font = "48px VT323";
-      ctx.fillText("GAME OVER", WIDTH / 2 - 95, HEIGHT / 2);
+      ctx.fillStyle = "#f0eee8";
+      ctx.font = "22px Space Grotesk, sans-serif";
+      ctx.fillText("GAME OVER", WIDTH / 2 - 62, HEIGHT / 2);
     }
   }, []);
 
@@ -175,53 +163,65 @@ export default function SimpleGame() {
 
   useEffect(() => {
     if (!stateRef.current) reset();
-
     const loop = () => {
       update();
       draw();
       frameRef.current = requestAnimationFrame(loop);
     };
-
     frameRef.current = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(frameRef.current);
   }, [draw, reset, update]);
 
+  const bindHold = (code) => ({
+    onMouseDown: () => holdKey(keysRef, code, true),
+    onMouseUp: () => holdKey(keysRef, code, false),
+    onMouseLeave: () => holdKey(keysRef, code, false),
+    onTouchStart: (e) => {
+      e.preventDefault();
+      holdKey(keysRef, code, true);
+    },
+    onTouchEnd: (e) => {
+      e.preventDefault();
+      holdKey(keysRef, code, false);
+    },
+    onTouchCancel: (e) => {
+      e.preventDefault();
+      holdKey(keysRef, code, false);
+    },
+  });
+
   return (
     <div className="flex flex-col items-center gap-4">
-      <div className="flex gap-4 flex-wrap justify-center text-xl">
-        <span className="text-[var(--color-game-yellow)]">SCORE: {score}</span>
-        <span className="text-[var(--color-game-pink)]">HP: {Math.max(0, lives)}</span>
+      <div className="flex gap-4 flex-wrap justify-center text-sm text-[var(--color-muted)]">
+        <span>Score: {score}</span>
+        <span>HP: {Math.max(0, lives)}</span>
       </div>
 
       <canvas
         ref={canvasRef}
         width={WIDTH}
         height={HEIGHT}
-        className="border-4 border-white bg-black max-w-full"
-        style={{ imageRendering: "pixelated" }}
+        className="border border-[var(--color-border)] rounded-[10px] bg-black max-w-full"
+        style={{ imageRendering: "pixelated", touchAction: "none" }}
       />
 
       <div className="flex gap-3 flex-wrap justify-center">
-        <button 
-          className="pixel-button" 
-          onMouseDown={() => keysRef.current.add("ArrowLeft")} 
-          onMouseUp={() => keysRef.current.delete("ArrowLeft")}
-          onTouchStart={(e) => { e.preventDefault(); keysRef.current.add("ArrowLeft"); }}
-          onTouchEnd={(e) => { e.preventDefault(); keysRef.current.delete("ArrowLeft"); }}
-        >◄</button>
-        <button className="pixel-button pixel-button-yellow" onClick={shoot}>FIRE</button>
-        <button 
-          className="pixel-button" 
-          onMouseDown={() => keysRef.current.add("ArrowRight")} 
-          onMouseUp={() => keysRef.current.delete("ArrowRight")}
-          onTouchStart={(e) => { e.preventDefault(); keysRef.current.add("ArrowRight"); }}
-          onTouchEnd={(e) => { e.preventDefault(); keysRef.current.delete("ArrowRight"); }}
-        >►</button>
-        <button className="pixel-button" onClick={reset}>RESET</button>
+        <button type="button" className="pixel-button" {...bindHold("ArrowLeft")}>
+          ◄
+        </button>
+        <button type="button" className="pixel-button pixel-button-yellow" onClick={shoot}>
+          Fire
+        </button>
+        <button type="button" className="pixel-button" {...bindHold("ArrowRight")}>
+          ►
+        </button>
+        <button type="button" className="pixel-button" onClick={reset}>
+          Reset
+        </button>
       </div>
 
-      <p className="text-xl text-[var(--color-game-cyan)] text-center">
-        MOVE: A/D OR ARROWS · SHOOT: SPACE
+      <p className="text-sm text-[var(--color-muted)] text-center m-0">
+        Move: A/D or arrows · Shoot: space · Hold side buttons on mobile
       </p>
     </div>
   );
