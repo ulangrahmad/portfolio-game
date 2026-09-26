@@ -404,7 +404,8 @@ export default function App() {
                       { name: "CYBERSECURITY", val: "WAZUH · SIEM · SURICATA · WIRESHARK · NMAP", color: "pink" },
                       { name: "SYSTEM & NETWORK", val: "WINDOWS/LINUX · LAN/WIFI · TROUBLESHOOTING", color: "cyan" },
                       { name: "PROGRAMMING", val: "PYTHON · SQL · HTML/CSS · JAVASCRIPT · PHP · REACT", color: "yellow" },
-                      { name: "TOOLS", val: "GIT · GITHUB · VS CODE · DOCKER", color: "green" },
+                      { name: "TOOLS", val: "GIT · GITHUB · VS CODE · DOCKER · JIRA", color: "green" },
+                      { name: "QUALITY ASSURANCE", val: "MANUAL TESTING · TEST CASE EXECUTION · BUG TRACKING", color: "cyan" },
                     ].map((s, i) => (
                       <motion.div
                         key={s.name}
@@ -439,7 +440,7 @@ export default function App() {
                       ["JAN 2023 — DEC 2023", "IT SUPPORT · PT. LAWU CAKRA SARANA", "Windows administration, hardware and network troubleshooting, endpoint security maintenance."],
                       ["FEB 2024 — JUL 2024", "MEME TOKEN WEB DEVELOPMENT", "Built responsive pre-launch websites for meme token projects with token identity, roadmap, and community information."],
                       ["2025", "CYBERSECURITY SKILL PATH", "Completed Google Cybersecurity Professional Certificate and Introduction to SOC training."],
-                      ["JAN 2026 — MAR 2026", "WAREHOUSE ADMINISTRATOR", "Managed inventory, ERP workflows, and stock audits at PT Kakha Berdaya Bersama."],
+                      ["AUG 2026 — OCT 2026", "QA (MANUAL TESTING) · ADIDATA INFOMATIKA · BANK MANDIRI", "Manual test case execution and bug tracking using Jira."],
                       ["2026 — NOW", "HOME SOC LAB", "Learning Cisco Introduction to Cybersecurity and building Wazuh, Suricata, and log monitoring lab."],
                     ].map((item, index) => (
                       <motion.li
