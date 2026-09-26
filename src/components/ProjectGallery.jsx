@@ -40,12 +40,12 @@ const projectsData = [
     year: "2023",
     role: "Frontend",
     problem:
-      "An architecture studio needed a portfolio site that presented projects cleanly without heavy CMS overhead.",
+      "An architecture studio needed a portofolio site that presented projects cleanly without heavy CMS overhead.",
     solution:
-      "Built a responsive portfolio website for architecture and interior work, with project showcase and contact paths for prospective clients.",
+      "Built a responsive portofolio website for architecture and interior work, with project showcase and contact paths for prospective clients.",
     techStack: ["HTML", "CSS", "JavaScript"],
     link: "https://github.com/ulangrahmad/Lycadedesign",
-    outcome: "Clearer online portfolio for studio work and client inquiries.",
+    outcome: "Clearer online portofolio for studio work and client inquiries.",
     featured: false,
   },
 ];

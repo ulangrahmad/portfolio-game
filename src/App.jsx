@@ -166,7 +166,7 @@ export default function App() {
             <p className="section-label">Selected work</p>
             <h2 className="section-title">Projects built around real constraints</h2>
             <p className="section-lead">
-              Each project started from a concrete problem — slow ordering, a studio without a clear portfolio site,
+              Each project started from a concrete problem — slow ordering, a studio without a clear portofolio site,
               or a token project that needed a pre-launch page before anything public existed.
             </p>
           </Reveal>
@@ -280,7 +280,7 @@ export default function App() {
                 </div>
                 <div className="fact">
                   <dt>Also</dt>
-                  <dd>Web development for product and portfolio sites</dd>
+                  <dd>Web development for product and portofolio sites</dd>
                 </div>
               </dl>
             </Reveal>

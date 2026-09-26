@@ -1,0 +1,172 @@
+@tailwindcss;
+@import "React directly in `src/main.tsx` imports CSS. No extra need for external Top-level import.
+
+@theme {
+  --color-bg: #171717;
+  --color-surface: #202020;
+  --color-panel: #1a1a1a;
+  --color-text: #f5f3ee;
+  --color-muted: #b5b5b5;
+  --color-accent: #c68a2d;
+  --font-heading: "Fraunces", serif;
+  --font-body: "Manrope", system-ui, sans-serif;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-accent) 55%, black);
+  color: var(--color-text);
+}
+
+a {
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+
+.section {
+  padding-block: clamp(4.5rem, 8vw, 7.5rem);
+}
+
+.section-title {
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  margin-bottom: 1.8rem;
+}
+
+.section-lead {
+  color: var(--color-muted);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(23, 23, 23, 0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--color-surface);
+}
+
+.nav-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 64px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.hero {
+  min-height: calc(100vh - 64px);
+  display: grid;
+  place-items: center;
+}
+
+.hero-content {
+  max-width: 2xl;
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 5vw, 5rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.hero-subtitle {
+  color: var(--color-muted);
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin: 1.5rem 0 2rem;
+}
+
+.skill-tag {
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  border: 1px solid var(--color-surface);
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.project-card {
+  border-radius: 10px;
+  border: 1px solid var(--color-surface);
+  overflow: hidden;
+  background: var(--color-panel);
+}
+
+.project-card:hover {
+  border-color: var(--color-accent);
+}
+
+.project-header {
+  border-bottom: 1px solid var(--color-surface);
+  background: var(--color-surface);
+}
+
+.project-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.project-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
