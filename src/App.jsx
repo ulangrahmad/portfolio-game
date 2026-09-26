@@ -405,7 +405,7 @@ export default function App() {
                       { name: "SYSTEM & NETWORK", val: "WINDOWS/LINUX · LAN/WIFI · TROUBLESHOOTING", color: "cyan" },
                       { name: "PROGRAMMING", val: "PYTHON · SQL · HTML/CSS · JAVASCRIPT · PHP · REACT", color: "yellow" },
                       { name: "TOOLS", val: "GIT · GITHUB · VS CODE · DOCKER · JIRA", color: "green" },
-                      { name: "QUALITY ASSURANCE", val: "MANUAL TESTING · TEST CASE EXECUTION · BUG TRACKING", color: "cyan" },
+                      { name: "QUALITY ASSURANCE", val: "MANUAL TESTING · TEST CASE EXECUTION · BUG TRACKING · SQL · JENKINS", color: "cyan" },
                     ].map((s, i) => (
                       <motion.div
                         key={s.name}
