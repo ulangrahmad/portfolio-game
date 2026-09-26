@@ -51,16 +51,7 @@ function BouncingSprite({ size = 48, x = 50, delay = 0, variant = "ghost" }) {
 }
 
 function PressStart() {
-  const reduce = useReducedMotion();
-  return (
-    <motion.div
-      className="text-2xl text-[var(--color-game-yellow)] mt-6"
-      animate={reduce ? {} : { opacity: [1, 0, 1] }}
-      transition={{ duration: 1.2, repeat: Infinity }}
-    >
-      ▼ PRESS START ▼
-    </motion.div>
-  );
+  return null;
 }
 
 function HPBar({ value = 100, flash = false }) {
