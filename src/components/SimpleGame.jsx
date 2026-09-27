@@ -225,6 +225,19 @@ export default function SimpleGame() {
     return () => cancelAnimationFrame(frameRef.current);
   }, [draw, reset, update]);
 
+  // Enhanced pointer/touch move handler for sliding
+  const handlePointerMove = (e) => {
+    const canvas = canvasRef.current;
+    if (!canvas || !stateRef.current) return;
+    const rect = canvas.getBoundingClientRect();
+    const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : null);
+    if (clientX === null) return;
+    const xPos = clientX - rect.left;
+    const scale = WIDTH / rect.width;
+    const canvasX = xPos * scale;
+    stateRef.current.playerX = Math.max(8, Math.min(WIDTH - 32, canvasX - 12));
+  };
+
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="flex gap-4 flex-wrap justify-center text-xl">
@@ -236,19 +249,33 @@ export default function SimpleGame() {
         ref={canvasRef}
         width={WIDTH}
         height={HEIGHT}
-        className="border-4 border-white bg-black max-w-full"
-        style={{ imageRendering: "pixelated" }}
+        onPointerDown={handlePointerMove}
+        onPointerMove={handlePointerMove}
+        onTouchStart={handlePointerMove}
+        onTouchMove={handlePointerMove}
+        className="border-4 border-white bg-black max-w-full touch-none select-none cursor-ew-resize"
+        style={{ imageRendering: "pixelated", touchAction: "none" }}
       />
 
       <div className="flex gap-3 flex-wrap justify-center">
-        <button className="pixel-button" onMouseDown={() => keysRef.current.add("ArrowLeft")} onMouseUp={() => keysRef.current.delete("ArrowLeft")}>◄</button>
-        <button className="pixel-button pixel-button-yellow" onClick={shoot}>FIRE</button>
-        <button className="pixel-button" onMouseDown={() => keysRef.current.add("ArrowRight")} onMouseUp={() => keysRef.current.delete("ArrowRight")}>►</button>
-        <button className="pixel-button" onClick={reset}>RESET</button>
+        <button 
+          className="pixel-button px-4 py-2" 
+          onPointerDown={() => keysRef.current.add("ArrowLeft")} 
+          onPointerUp={() => keysRef.current.delete("ArrowLeft")}
+          onPointerLeave={() => keysRef.current.delete("ArrowLeft")}
+        >◄</button>
+        <button className="pixel-button pixel-button-yellow px-4 py-2" onClick={shoot}>FIRE</button>
+        <button 
+          className="pixel-button px-4 py-2" 
+          onPointerDown={() => keysRef.current.add("ArrowRight")} 
+          onPointerUp={() => keysRef.current.delete("ArrowRight")}
+          onPointerLeave={() => keysRef.current.delete("ArrowRight")}
+        >►</button>
+        <button className="pixel-button px-4 py-2" onClick={reset}>RESET</button>
       </div>
 
       <p className="text-xl text-[var(--color-game-cyan)] text-center">
-        MOVE: A/D OR ARROWS · SHOOT: SPACE
+        MOVE: SLIDE/DRAG ON CANVAS · SHOOT: FIRE
       </p>
     </div>
   );
