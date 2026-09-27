@@ -167,11 +167,50 @@ export default function SimpleGame() {
     const up = (event) => keysRef.current.delete(event.code);
     window.addEventListener("keydown", down);
     window.addEventListener("keyup", up);
+
+    const canvas = canvasRef.current;
+    let touchStartX = 0;
+    const handleTouchStart = (e) => {
+      if (e.touches && e.touches.length > 0) {
+        touchStartX = e.touches[0].clientX;
+        e.preventDefault();
+      }
+    };
+    const handleTouchMove = (e) => {
+      if (!canvasRef.current) return;
+      if (e.touches && e.touches.length > 0) {
+        const touchX = e.touches[0].clientX;
+        const diffX = touchX - touchStartX;
+        if (Math.abs(diffX) > 5) {
+          const state = stateRef.current;
+          if (state && !state.gameOver) {
+            state.playerX += diffX * 0.8;
+            state.playerX = Math.max(8, Math.min(WIDTH - 32, state.playerX));
+            touchStartX = touchX;
+          }
+        }
+        e.preventDefault();
+      }
+    };
+    const handleTouchEnd = () => {
+      touchStartX = 0;
+    };
+    if (canvas) {
+      canvas.addEventListener("touchstart", handleTouchStart, { passive: false });
+      canvas.addEventListener("touchmove", handleTouchMove, { passive: false });
+      canvas.addEventListener("touchend", handleTouchEnd, { passive: false });
+    }
+
     return () => {
       window.removeEventListener("keydown", down);
       window.removeEventListener("keyup", up);
+      if (canvas) {
+        canvas.removeEventListener("touchstart", handleTouchStart);
+        canvas.removeEventListener("touchmove", handleTouchMove);
+        canvas.removeEventListener("touchend", handleTouchEnd);
+      }
     };
-  }, []);
+  }, [canvasRef]);
 
   useEffect(() => {
     if (!stateRef.current) reset();
