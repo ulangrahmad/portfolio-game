@@ -41,9 +41,13 @@ const ProjectCard = ({ project, onClick }) => {
       whileHover={{ scale: 1.02 }}
       onMouseEnter={() => sfx.hover()}
     >
-      <img src={project.image} alt={project.title} className="w-full h-40 object-cover border-2 border-[var(--color-game-border)] mb-2" />
-      <h3 className="text-2xl text-[var(--color-game-text-primary)]">{project.title}</h3>
-      <p className="text-[var(--color-game-text-secondary)]">Tech: {project.techStack.join(" · ")}</p>
+      <div className="relative">
+        <img src={project.image} alt={project.title} className="w-full h-40 object-cover border-2 border-[var(--color-game-border)]" />
+        <div className="absolute bottom-0 left-0 right-0 bg-black/80 px-2 py-1">
+          <h3 className="text-xl text-[var(--color-game-text-primary)] font-normal">{project.title}</h3>
+          <p className="text-xs text-[var(--color-game-text-secondary)]">Tech: {project.techStack.join(" · ")}</p>
+        </div>
+      </div>
     </motion.div>
   );
 };

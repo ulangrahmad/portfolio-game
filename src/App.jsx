@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Play, Shield, Terminal, Trophy, User, ArrowRight, Heart, Map, Mail, Link, Image } from "lucide-react";
+import { Play, Shield, Terminal, Trophy, User, ArrowRight, Heart, Map, Mail, Link, Image, Linkedin, Github } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import PixelPortrait from "./components/PixelPortrait";
 import SimpleGame from "./components/SimpleGame";
@@ -547,8 +547,8 @@ export default function App() {
                   <div className="space-y-3 text-xl">
                     {[
                       ["EMAIL", "ulangrahmad121@gmail.com", "mailto:ulangrahmad121@gmail.com", <Mail size={20} />],
-                      ["LINKEDIN", "ULANG RAHMAD CHOLIQ", "https://www.linkedin.com/in/ulang-rahmad-choliq-4a565b377/", <Link size={20} />],
-                      ["GITHUB", "github.com/ulangrahmad", "https://github.com/ulangrahmad", <Link size={20} />],
+                      ["LINKEDIN", "ULANG RAHMAD CHOLIQ", "https://www.linkedin.com/in/ulang-rahmad-choliq-4a565b377/", <Linkedin size={20} />],
+                      ["GITHUB", "github.com/ulangrahmad", "https://github.com/ulangrahmad", <Github size={20} />],
                       ["RESUME", "DOWNLOAD CV.PDF", "/cv-ulang-rahmad-choliq.pdf", <ArrowRight size={20} />],
                     ].map(([label, val, href, icon], i) => (
                       <motion.a
