@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Play, Shield, Terminal, Trophy, User, ArrowRight, Heart, Map, Mail, Link, Image, Linkedin, Github } from "lucide-react";
+import { Play, Shield, Terminal, Trophy, User, ArrowRight, Heart, Map, Mail, Link, Image, Menu, X } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import PixelPortrait from "./components/PixelPortrait";
 import SimpleGame from "./components/SimpleGame";
@@ -244,12 +244,23 @@ export default function App() {
             </div>
           </motion.div>
 
-          <motion.div
-            className="flex gap-3 justify-center flex-wrap py-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
+          <div className="relative py-4">
+            {/* Mobile dropdown menu toggle */}
+            <div className="flex md:hidden justify-end mb-2">
+              <button
+                onClick={() => {
+                  sfx.click();
+                  const menuEl = document.getElementById("mobile-menu-dropdown");
+                  if (menuEl) menuEl.classList.toggle("hidden");
+                }}
+                className="pixel-button flex items-center gap-2 text-sm py-2 px-3"
+                aria-label="Toggle mobile menu"
+              >
+                <Menu size={18} /> MENU
+              </button>
+            </div>
+
+            <div id="mobile-menu-dropdown" className="hidden md:flex gap-3 justify-center flex-wrap py-2 flex-col md:flex-row">
             {[
               { id: "menu", label: "START", icon: Play },
               { id: "game", label: "PLAY GAME", icon: Play },
@@ -268,18 +279,24 @@ export default function App() {
                   whileHover={{ y: -3 }}
                   whileTap={{ y: 2 }}
                   onMouseEnter={() => sfx.hover()}
-                  onClick={() => handleTab(tab.id)}
+                  onClick={() => {
+                    handleTab(tab.id);
+                    const menuEl = document.getElementById("mobile-menu-dropdown");
+                    if (menuEl && window.innerWidth < 768) menuEl.classList.add("hidden");
+                  }}
                   initial={{ y: -20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.3 + i * 0.08 }}
-                  className={`pixel-button flex items-center gap-2 ${active ? "pixel-button-yellow" : ""}`}
+                  className={`pixel-button flex items-center gap-2 justify-center ${active ? "pixel-button-yellow" : ""}`}
+                  aria-label={tab.label}
                 >
                   <Icon size={18} />
                   {tab.label}
                 </motion.button>
               );
             })}
-          </motion.div>
+            </div>
+          </div>
 
           <div className="mt-6">
             {screen === "menu" && (
@@ -547,8 +564,8 @@ export default function App() {
                   <div className="space-y-3 text-xl">
                     {[
                       ["EMAIL", "ulangrahmad121@gmail.com", "mailto:ulangrahmad121@gmail.com", <Mail size={20} />],
-                      ["LINKEDIN", "ULANG RAHMAD CHOLIQ", "https://www.linkedin.com/in/ulang-rahmad-choliq-4a565b377/", <Linkedin size={20} />],
-                      ["GITHUB", "github.com/ulangrahmad", "https://github.com/ulangrahmad", <Github size={20} />],
+                      ["LINKEDIN", "ULANG RAHMAD CHOLIQ", "https://www.linkedin.com/in/ulang-rahmad-choliq-4a565b377/", <Link size={20} />],
+                      ["GITHUB", "github.com/ulangrahmad", "https://github.com/ulangrahmad", <Link size={20} />],
                       ["RESUME", "DOWNLOAD CV.PDF", "/cv-ulang-rahmad-choliq.pdf", <ArrowRight size={20} />],
                     ].map(([label, val, href, icon], i) => (
                       <motion.a

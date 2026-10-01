@@ -2,6 +2,7 @@
 // No audio files needed — pure synthesized retro tones
 
 let audioCtx = null;
+let isMuted = false;
 
 function getCtx() {
   if (!audioCtx) {
@@ -11,6 +12,7 @@ function getCtx() {
 }
 
 export function playBlip(freq = 440, duration = 0.08, type = "square", volume = 0.1) {
+  if (isMuted) return;
   try {
     const ctx = getCtx();
     if (ctx.state === "suspended") ctx.resume();
@@ -26,6 +28,19 @@ export function playBlip(freq = 440, duration = 0.08, type = "square", volume = 
   } catch (e) {
     // silent fail
   }
+}
+
+export function setMute(muted) {
+  isMuted = muted;
+}
+
+export function getMute() {
+  return isMuted;
+}
+
+export function toggleMute() {
+  isMuted = !isMuted;
+  return isMuted;
 }
 
 // === Specific Game Sounds ===
